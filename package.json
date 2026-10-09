@@ -1,0 +1,13 @@
+{
+  "name": "portfolio-amanda",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio Amanda Zaidi - Frontend Developer",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "start": "npx serve . -p 3000"
+  },
+  "keywords": [],
+  "author": "Amanda Zaidi",
+  "license": "ISC"
+}
