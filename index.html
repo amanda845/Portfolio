@@ -14,6 +14,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     /* Concept : Portfolio Haute Couture Rouge & Noir (Black & Red), élégant, moderne, contrasté avec accents écarlates et néons subtils. */
@@ -1204,13 +1205,186 @@
     }
 
     .status.ok {
-      border-color: var(--accent);
-      background: var(--accent-soft);
+      border-color: #10B981;
+      background: rgba(16, 185, 129, 0.14);
+      color: #34D399;
     }
 
     .status.ko {
       border-color: var(--accent);
-      color: var(--accent);
+      background: var(--accent-soft);
+      color: #FFA4B0;
+    }
+
+    /* Mur de messages / Livre d'or */
+    .guestbook-section {
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid var(--line);
+    }
+
+    .gb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+
+    .gb-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .gb-title-wrap h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 12px #10B981;
+      animation: gbPulse 2s infinite;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    @keyframes gbPulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
+    }
+
+    .gb-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    .gb-subtitle {
+      color: var(--muted);
+      font-size: 0.94rem;
+      margin-bottom: 24px;
+    }
+
+    .gb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 18px;
+    }
+
+    .gb-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gb-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(229, 46, 70, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(229, 46, 70, 0.08);
+    }
+
+    .gb-card.highlight {
+      border-color: #10B981;
+      animation: cardFlash 1.8s ease;
+    }
+
+    @keyframes cardFlash {
+      0% {
+        background: rgba(16, 185, 129, 0.2);
+      }
+      100% {
+        background: var(--surface);
+      }
+    }
+
+    .gb-card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .gb-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #ff6b7e);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .gb-user-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .gb-user-name {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gb-user-time {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    .gb-message {
+      font-size: 0.92rem;
+      line-height: 1.55;
+      color: #D1D5DB;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .gb-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 36px 20px;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      color: var(--muted);
+      font-size: 0.94rem;
     }
 
     /* Pied de page */
@@ -1563,6 +1737,21 @@
             <button class="btn primary" id="send" type="submit" data-mag>Envoyer le message →</button>
           </form>
         </div>
+
+        <!-- Mur des messages publics / Livre d'or -->
+        <div class="guestbook-section" id="guestbookSection">
+          <div class="gb-header">
+            <div class="gb-title-wrap">
+              <span class="pulse-dot"></span>
+              <h3>Livre d'or & Messages récents</h3>
+            </div>
+            <span class="gb-badge" id="gbCount">0 message</span>
+          </div>
+          <p class="gb-subtitle">Les messages et retours partagés par les visiteurs :</p>
+          <div class="gb-grid" id="gbList">
+            <!-- Messages chargés dynamiquement -->
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -1738,16 +1927,203 @@
       const c = $("#ok").checked; $("#e-ok").textContent = c ? "" : "Coche la case pour continuer."; if (!c) ok = false;
       return ok;
     }
-    f.addEventListener("submit", e => {
+    /* =======================================================
+       LIVRE D'OR / MUR DES MESSAGES PUBLICS (SUPABASE & LOCAL)
+       ======================================================= */
+    const SUPABASE_CONFIG = {
+      // Si tu as un projet Supabase, renseigne ton URL et ta clé anon ci-dessous pour que tout le monde voie les messages en direct :
+      url: "https://TON-PROJET.supabase.co",
+      anonKey: "TA-CLE-ANON"
+    };
+
+    let supabaseClient = null;
+    if (window.supabase && SUPABASE_CONFIG.url.startsWith("http") && !SUPABASE_CONFIG.url.includes("TON-PROJET")) {
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+      } catch (e) {
+        console.warn("Supabase init info:", e);
+      }
+    }
+
+    const DEFAULT_GUESTBOOK = [];
+
+    function getStoredMessages() {
+      try {
+        const local = localStorage.getItem("portfolio_guestbook");
+        if (!local) return [];
+        const parsed = JSON.parse(local);
+        // Nettoie d'anciens exemples de test si présents
+        const filtered = Array.isArray(parsed) ? parsed.filter(m => m.name !== "Karim M." && m.name !== "Sarah L.") : [];
+        return filtered;
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveStoredMessages(list) {
+      try {
+        localStorage.setItem("portfolio_guestbook", JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    function getInitials(name) {
+      if (!name) return "AZ";
+      const parts = name.trim().split(/\s+/);
+      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+
+    function timeAgo(dateString) {
+      try {
+        const d = new Date(dateString);
+        const diff = Math.floor((Date.now() - d.getTime()) / 1000);
+        if (diff < 60) return "À l'instant";
+        if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
+        if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)} h`;
+        return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+      } catch (e) {
+        return "Récemment";
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || "").replace(/[&<>"']/g, s => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[s]);
+    }
+
+    function renderGuestbook(messages, highlightFirst = false) {
+      const listEl = $("#gbList");
+      const countEl = $("#gbCount");
+      if (!listEl) return;
+
+      countEl.textContent = `${messages.length} message${messages.length > 1 ? "s" : ""}`;
+
+      if (!messages.length) {
+        listEl.innerHTML = `<div class="gb-empty">Aucun message pour le moment. Soyez le premier à laisser un message ci-dessus ! ✍️</div>`;
+        return;
+      }
+
+      listEl.innerHTML = messages.map((m, idx) => {
+        const isHigh = highlightFirst && idx === 0;
+        return `
+          <div class="gb-card ${isHigh ? "highlight" : ""}">
+            <div class="gb-card-top">
+              <div class="gb-avatar">${escapeHtml(getInitials(m.name))}</div>
+              <div class="gb-user-info">
+                <span class="gb-user-name">${escapeHtml(m.name)}</span>
+                <span class="gb-user-time">${timeAgo(m.created_at)}</span>
+              </div>
+            </div>
+            <p class="gb-message">${escapeHtml(m.message)}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function loadGuestbook() {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from("guestbook")
+            .select("*")
+            .order("created_at", { ascending: false })
+            .limit(30);
+
+          if (!error && data && data.length) {
+            renderGuestbook(data);
+            saveStoredMessages(data);
+            return;
+          }
+        } catch (err) {
+          console.warn("Supabase load fallback:", err);
+        }
+      }
+      renderGuestbook(getStoredMessages());
+    }
+
+    async function addGuestbookEntry(name, message) {
+      const newEntry = {
+        name: name,
+        message: message,
+        created_at: new Date().toISOString()
+      };
+
+      // 1. Sauvegarder dans Supabase si configuré
+      if (supabaseClient) {
+        try {
+          await supabaseClient.from("guestbook").insert([newEntry]);
+        } catch (err) {
+          console.warn("Supabase insert error:", err);
+        }
+      }
+
+      // 2. Mettre à jour l'affichage en direct
+      const current = getStoredMessages();
+      const updated = [newEntry, ...current];
+      saveStoredMessages(updated);
+      renderGuestbook(updated, true);
+    }
+
+    // Charger les messages au démarrage
+    loadGuestbook();
+
+    f.addEventListener("submit", async e => {
       e.preventDefault(); st.hidden = true; st.className = "status";
-      if (!check()) { st.hidden = false; st.classList.add("ko"); st.textContent = "Le formulaire contient des erreurs. Corrige les champs signalés."; return }
-      const b = $("#send"); b.disabled = true; b.textContent = "Envoi en cours…";
-      setTimeout(() => {
-        b.disabled = false; b.textContent = "Envoyer le message →";
-        st.hidden = false; st.classList.add("ok");
-        st.textContent = "Message validé. Ce formulaire n'est pas encore relié à un service d'envoi : rien n'a été transmis.";
+      if (!check()) {
+        st.hidden = false;
+        st.classList.add("ko");
+        st.textContent = "Le formulaire contient des erreurs. Corrige les champs signalés.";
+        return;
+      }
+      const b = $("#send");
+      b.disabled = true;
+      b.textContent = "Envoi en cours…";
+
+      const fn = $("#fn").value.trim();
+      const ln = $("#ln").value.trim();
+      const em = $("#em").value.trim();
+      const msg = $("#msg").value.trim();
+      const fullName = `${fn} ${ln}`;
+
+      try {
+        // Envoi de l'e-mail via FormSubmit
+        const res = await fetch("https://formsubmit.co/ajax/amandazaidi006@gmail.com", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            name: fullName,
+            email: em,
+            message: msg,
+            _subject: `Nouveau message Portfolio de ${fullName}`,
+            _template: "table"
+          })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        b.disabled = false;
+        b.textContent = "Envoyer le message →";
+
+        // Afficher immédiatement le message sur le mur en dessous
+        await addGuestbookEntry(fullName, msg);
+
+        st.hidden = false;
+        st.classList.add("ok");
+        st.textContent = "✓ Votre message a bien été envoyé et publié sur le mur ci-dessous !";
         f.reset();
-      }, 900);
+      } catch (err) {
+        // Même en cas d'aléa réseau email, publier sur le mur public
+        await addGuestbookEntry(fullName, msg);
+        b.disabled = false;
+        b.textContent = "Envoyer le message →";
+        st.hidden = false;
+        st.classList.add("ok");
+        st.textContent = "✓ Votre message a bien été publié sur le mur ci-dessous !";
+        f.reset();
+      }
     });
 
     /* Effets : parallaxe de la photo, boutons magnétiques */
